@@ -45,15 +45,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Transactional
     public void upgradeSubscription(Long userId, PlanType newPlan) {
+        // 1. İstifadəçini tapırıq
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-
-        if (user.getRole().name().equals(newPlan.name())) {
-            log.warn("User {} is already on plan {}", user.getEmail(), newPlan);
-        }
-
-
+        // 2. Mövcud abunəliyi tapırıq və ya yenisini yaradırıq
         Subscription subscription = subscriptionRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     Subscription newSub = new Subscription();
@@ -61,8 +57,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                     return newSub;
                 });
 
-
-        LocalDateTime startDate = (subscription.getExpiryDate() != null && subscription.getExpiryDate().isAfter(LocalDateTime.now()))
+        // 3. Tarixi hesablayırıq (əgər hələ bitməyibsə üzərinə 1 ay gəlirik)
+        LocalDateTime startDate = (subscription.getExpiryDate() != null &&
+                subscription.getExpiryDate().isAfter(LocalDateTime.now()))
                 ? subscription.getExpiryDate()
                 : LocalDateTime.now();
 
@@ -70,14 +67,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscription.setExpiryDate(startDate.plusMonths(1));
         subscriptionRepository.save(subscription);
 
+        // 4. Rol Mapping Məntiqi (FREE -> USER, digərləri eynilə)
         try {
-            Role newRole = Role.valueOf(newPlan.name());
+            Role newRole = (newPlan == PlanType.FREE) ? Role.USER : Role.valueOf(newPlan.name());
             user.setRole(newRole);
             userRepository.save(user);
         } catch (IllegalArgumentException e) {
+            log.error("Role mapping error for plan: {}", newPlan);
             throw new RuntimeException("Mapping error: Plan " + newPlan + " has no matching Role");
         }
 
-        log.info("Subscription upgraded: User {} -> {}", user.getEmail(), newPlan);
+        log.info("Subscription upgraded: User {} is now {}", user.getEmail(), newPlan);
     }
 }
