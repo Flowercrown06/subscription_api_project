@@ -70,7 +70,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscription.setExpiryDate(startDate.plusMonths(1));
         subscriptionRepository.save(subscription);
 
-
         try {
             Role newRole = Role.valueOf(newPlan.name());
             user.setRole(newRole);

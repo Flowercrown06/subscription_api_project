@@ -12,8 +12,6 @@ This is a robust **Subscription Management API** built with Spring Boot 3.3.4. I
 ## ✨ Key Features
 * 🔐 **Secure Auth:** JWT-based authentication and Role-Based Access Control (RBAC).
 * 💳 **Subscription Logic:** Dynamic plan upgrades (`FREE`, `PREMIUM`, `ENTERPRISE`) with real-time role synchronization.
-* 📧 **Email Notifications:** Automated mail alerts for subscription status changes.
-* 📱 **QR Integration:** Built-in QR code generation for digital subscription verification.
 * 🗺️ **High Performance:** Optimized Entity-to-DTO mapping using **MapStruct**.
 * 📖 **API Docs:** Fully documented with **Swagger UI / OpenAPI 3**.
 * 🐳 **Containerized:** Seamless deployment using **Docker** and **Docker Compose**.
@@ -23,9 +21,9 @@ This is a robust **Subscription Management API** built with Spring Boot 3.3.4. I
 ## 🛠️ Technical Stack
 * **Backend:** Java 17, Spring Boot 3.3.4
 * **Security:** Spring Security, JWT (JJWT)
-* **Persistence:** Spring Data JPA, PostgreSQL, H2 (for testing)
+* **Persistence:** Spring Data JPA, PostgreSQL 
 * **Mapping:** MapStruct 1.5.5
-* **Utilities:** Lombok, ZXing (QR Codes), Spring Mail
+* **Utilities:** Lombok 
 * **Documentation:** SpringDoc OpenAPI
 
 ---
@@ -37,8 +35,7 @@ This is a robust **Subscription Management API** built with Spring Boot 3.3.4. I
 | `POST` | `/api/auth/register` | Public | Create a new user account |
 | `POST` | `/api/auth/login` | Public | Authenticate & receive JWT |
 | `POST` | `/api/subscriptions/upgrade` | User | Change current plan & update Role |
-| `GET` | `/api/v1/qr/generate` | User | Generate subscription QR code |
-| `GET` | `/swagger-ui.html` | Public | Interactive API Documentation |
+
 
 ---
 ## 📁 Project Architecture
