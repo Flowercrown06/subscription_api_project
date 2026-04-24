@@ -45,20 +45,17 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Transactional
     public void upgradeSubscription(Long userId, PlanType newPlan) {
-        // 1. İstifadəçini tapırıq
-        User user = userRepository.findById(userId)
+         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 2. Mövcud abunəliyi tapırıq və ya yenisini yaradırıq
-        Subscription subscription = subscriptionRepository.findByUserId(userId)
+         Subscription subscription = subscriptionRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     Subscription newSub = new Subscription();
                     newSub.setUser(user);
                     return newSub;
                 });
 
-        // 3. Tarixi hesablayırıq (əgər hələ bitməyibsə üzərinə 1 ay gəlirik)
-        LocalDateTime startDate = (subscription.getExpiryDate() != null &&
+         LocalDateTime startDate = (subscription.getExpiryDate() != null &&
                 subscription.getExpiryDate().isAfter(LocalDateTime.now()))
                 ? subscription.getExpiryDate()
                 : LocalDateTime.now();
@@ -67,7 +64,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscription.setExpiryDate(startDate.plusMonths(1));
         subscriptionRepository.save(subscription);
 
-        // 4. Rol Mapping Məntiqi (FREE -> USER, digərləri eynilə)
         try {
             Role newRole = (newPlan == PlanType.FREE) ? Role.USER : Role.valueOf(newPlan.name());
             user.setRole(newRole);

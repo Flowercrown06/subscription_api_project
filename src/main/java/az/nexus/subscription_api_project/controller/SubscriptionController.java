@@ -43,7 +43,7 @@ public class SubscriptionController {
     }
 
     @PostMapping("/upgrade")
-    @PreAuthorize("isAuthenticated()") // Yalnız login olanlar müraciət edə bilər
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> upgrade(
             @RequestParam Long userId,
             @RequestParam PlanType newPlan) {
