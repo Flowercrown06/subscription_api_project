@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:15
+    container_name: subscription-postgres
+    environment:
+      POSTGRES_DB: subscription_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password
+    ports:
+      - "5450:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .   # Bu hissə cari qovluqdakı Dockerfile-dan istifadə edərək Java tətbiqini build edir
+    container_name: subscription-app
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/subscription_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: your_password
+    depends_on:
+      - db     # Baza hazır olmadan Java tətbiqinin başlamamasını təmin edir
+
+volumes:
+  postgres_data:
